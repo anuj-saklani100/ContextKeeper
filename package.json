@@ -1,0 +1,97 @@
+{
+  "name": "contextkeeperbyanuj",
+  "displayName": "ContextKeeper",
+  "description": "Multi-model AI chat with persistent context. Switch models without losing history.",
+  "version": "1.0.0",
+  "publisher": "AnujSaklani",
+  "icon": "assets/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnujSaklani/contextkeeper-vscode"
+  },
+  "engines": { "vscode": "^1.89.0" },
+  "categories": ["AI", "Chat", "Other"],
+  "keywords": ["ai", "chat", "claude", "openai", "gemini", "context", "history", "model switcher"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{
+        "id": "contextkeeper",
+        "title": "ContextKeeper",
+        "icon": "$(comment-discussion)"
+      }]
+    },
+    "views": {
+      "contextkeeper": [{
+        "type": "webview",
+        "id": "contextkeeper.chat",
+        "name": "Chat"
+      }]
+    },
+    "commands": [
+      { "command": "contextkeeper.newSession",  "title": "ContextKeeper: New Session" },
+      { "command": "contextkeeper.switchModel", "title": "ContextKeeper: Switch Model" },
+      { "command": "contextkeeper.explainCode", "title": "ContextKeeper: Explain Selected Code" },
+      { "command": "contextkeeper.askCode",     "title": "ContextKeeper: Ask About Selected Code" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "contextkeeper.explainCode", "when": "editorHasSelection", "group": "contextkeeper@1" },
+        { "command": "contextkeeper.askCode",     "when": "editorHasSelection", "group": "contextkeeper@2" }
+      ]
+    },
+    "configuration": {
+      "title": "ContextKeeper",
+      "properties": {
+        "contextkeeper.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Your [Anthropic API key](https://console.anthropic.com/)"
+        },
+        "contextkeeper.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Your [OpenAI API key](https://platform.openai.com/api-keys)"
+        },
+        "contextkeeper.googleApiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Your [Google AI API key](https://aistudio.google.com/app/apikey)"
+        },
+        "contextkeeper.ollamaUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama base URL for local models"
+        },
+        "contextkeeper.defaultModel": {
+          "type": "string",
+          "default": "gpt-4o",
+          "description": "Default model for new sessions"
+        },
+        "contextkeeper.summarizeAfterTurns": {
+          "type": "number",
+          "default": 20,
+          "description": "Auto-summarize history after this many turns"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch":   "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.89.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "@vscode/vsce": "^2.26.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.25.0",
+    "openai": "^4.47.0",
+    "@google/generative-ai": "^0.14.0"
+  }
+}
