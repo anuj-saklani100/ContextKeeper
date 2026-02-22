@@ -22,7 +22,13 @@ export class ChatPanelProvider implements vscode.WebviewViewProvider {
   resolveWebviewView(view: vscode.WebviewView) {
     this.view = view;
     view.webview.options = { enableScripts: true };
-    view.webview.html = this.getHtml();
+    try {
+      view.webview.html = this.getHtml();
+    } catch (e: any) {
+      view.webview.html = `<html><body><p style="color:red;padding:16px;">Failed to load chat UI: ${e.message}</p></body></html>`;
+      vscode.window.showErrorMessage(`ContextKeeper: ${e.message}`);
+      return;
+    }
 
     view.webview.onDidReceiveMessage(async msg => {
       switch (msg.type) {
@@ -138,7 +144,15 @@ export class ChatPanelProvider implements vscode.WebviewViewProvider {
   private post(msg: object) { this.view?.webview.postMessage(msg); }
 
   private getHtml(): string {
-    const p = path.join(__dirname, "../../src/sidebar/chat.html");
-    return fs.readFileSync(p, "utf8");
+    // Try multiple locations: next to compiled JS (packaged), or in src/ (dev mode)
+    const candidates = [
+      path.join(this.extUri.fsPath, "src", "sidebar", "chat.html"),
+      path.join(__dirname, "chat.html"),
+      path.join(__dirname, "../../src/sidebar/chat.html"),
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) return fs.readFileSync(p, "utf8");
+    }
+    throw new Error(`chat.html not found. Searched: ${candidates.join(", ")}`);
   }
 }
