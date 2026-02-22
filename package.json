@@ -2,7 +2,7 @@
   "name": "contextkeeperbyanuj",
   "displayName": "ContextKeeper",
   "description": "Multi-model AI chat with persistent context. Switch models without losing history.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "AnujSaklani",
   "icon": "assets/icon.png",
   "repository": {
